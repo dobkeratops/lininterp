@@ -51,6 +51,13 @@ pub trait InvLerp<F=f32>:Sized {
 	fn inv_lerp(&self,a:&Self,b:&Self)->F;
 }
 
+/// implement for types that represent a range,
+// e.g. (start,end).lerp_by(0.3)
+pub trait LerpBy<F>{
+	type Output;
+	fn lerp_by(&self,f:F)->Output;
+}
+
 /// bigger formulation of 'lerp' with blend factor
 /// taking known points,
 /// https://en.wikipedia.org/wiki/Linear_interpolation#Linear_interpolation_between_two_known_points
@@ -88,6 +95,8 @@ impl<T,Diff,Factor> InvLerp<Factor> for T where
 		ofs.div(&rng)
 	}
 }
+
+
 
 pub fn avr<T:Lerp>(a:&T,b:&T)->T{ a.lerp(b,0.5f32) }
 
