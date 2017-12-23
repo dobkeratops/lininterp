@@ -26,11 +26,23 @@ mod tests {
 /// uses reference args for suitability with heavier types
 pub trait Lerp<F=f32> :Sized{
 	fn lerp(&self,b:&Self,factor:F)->Self;
-	fn lerp_between<Y>(&self,a:&Self,b:&Self, y0:&Y,y1:&Y)->Y
+	fn lerp_points<Y>(&self,a:&Self,b:&Self, y0:&Y,y1:&Y)->Y
 		where Y:Lerp<F>, Self:InvLerp<F>
 	{
-		lerp_between(self,a,b, y0,y1)
+		lerp_points(self,a,b, y0,y1)
 	}
+}
+/// Linear interpolation, reversed order params
+/// 'self' is the blend factor; 
+/// trailing params are the range
+pub trait LerpBetween<T> :Sized+Clone where T:Lerp<Self>{
+	fn lerp_between(&self,a:&T,b:&T)->T {
+		a.lerp(b,self.clone())
+	}
+}
+/// free-function wrapper for 'lerp'
+pub fn lerp<F,T:Lerp<F>>(a:&T,b:&T, f:F)->T{
+	a.lerp(b,f)
 }
 /// Inverse linear interpolation trait,
 /// gives the factor by which 'self'
@@ -40,10 +52,12 @@ pub trait InvLerp<F=f32>:Sized {
 }
 
 /// bigger formulation of 'lerp' with blend factor
+/// taking known points,
+/// https://en.wikipedia.org/wiki/Linear_interpolation#Linear_interpolation_between_two_known_points
 /// implementable through lerp/invlerp
 /// TODO but also possible for int types ordered
 /// differently i.e multiply-add - divide by x diff
-fn lerp_between<X,Y,F>(x:&X,x0:&X,x1:&X, y0:&Y,y1:&Y)->Y where
+fn lerp_points<X,Y,F>(x:&X,x0:&X,x1:&X, y0:&Y,y1:&Y)->Y where
 	X:InvLerp<F>, Y:Lerp<F>
 {
 	y0.lerp(y1, x.inv_lerp(x0,x1) )
