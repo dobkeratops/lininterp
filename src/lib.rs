@@ -10,7 +10,7 @@ mod tests {
 		let f1=0.75f32;
 		let f=0.5f32;
 		let z1=a.lerp(&b,f0);
-		let z2=a.lerp(&b,f1);
+		let z2=a.pair_with(&b).lerp_by(f1);
 		let w1=12.5f32;
 		let w2=17.5f32;
         assert_eq!(z1,w1);
@@ -56,6 +56,16 @@ pub trait InvLerp<F=f32>:Sized {
 pub trait LerpBy<F>{
 	type Output;
 	fn lerp_by(&self,f:F)->Self::Output;
+}
+impl<'a,'b, F,T:Lerp<F>> LerpBy<F> for (&'a T,&'b T) {
+	type Output=T;
+	fn lerp_by(&self,f:F)->Self::Output{ self.0.lerp(&self.1,f) }
+}
+pub trait PairWith<B> {
+	fn pair_with<'a,'b>(&'a self,b:&'b B)->(&'a Self,&'b B);
+}
+impl<A,B> PairWith<B> for A {
+	fn pair_with<'a,'b>(&'a self,b:&'b B)->(&'a A,&'b B){(self,b)}
 }
 
 /// bigger formulation of 'lerp' with blend factor
