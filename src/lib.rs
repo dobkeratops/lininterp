@@ -55,7 +55,7 @@ pub trait InvLerp<F=f32>:Sized {
 // e.g. (start,end).lerp_by(0.3)
 pub trait LerpBy<F>{
 	type Output;
-	fn lerp_by(&self,f:F)->Output;
+	fn lerp_by(&self,f:F)->Self::Output;
 }
 
 /// bigger formulation of 'lerp' with blend factor
