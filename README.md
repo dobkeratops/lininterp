@@ -4,6 +4,7 @@ Should support dimension checking types etc by virtue of using fully generic int
 
 Also includes various related functions:
    
+   ```y = y0.lerp(&y1, t)```
    ```t=inv_lerp(&y,&y0,&y1)```     
    ```t.lerp_between(&y0,&y1)```,  
    ```t.lerp_points(&x0,&x1, &y0,&y1)``` , and 
