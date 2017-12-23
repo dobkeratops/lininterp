@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["dobkeratops <dobkeratopsgit@gmail.com>"]
 description = "generic linear interpolation, should support dimension checking types etc"
 
+license = "MIT"
 repository = "https://github.com/dobkeratops/lininterp"
 
 [dependencies]
