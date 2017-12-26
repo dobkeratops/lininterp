@@ -1,6 +1,6 @@
 [package]
 name = "lininterp"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["dobkeratops <dobkeratopsgit@gmail.com>"]
 description = "generic linear interpolation; should support dimension checking types etc by virtue of using fully generic intermediate values."
 license = "MIT"

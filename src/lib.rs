@@ -25,11 +25,13 @@ mod tests {
 // by the second parameter
 /// uses reference args for suitability with heavier types
 pub trait Lerp<F=f32> :Sized{
+	/// interpolate between self and the first parameter, by the second parameter
 	fn lerp(&self,b:&Self,factor:F)->Self;
-	fn lerp_points<Y>(&self,a:&Self,b:&Self, y0:&Y,y1:&Y)->Y
+	/// lerp between 2d points, also thought of as mapping an input range (x0-x1) to the output range (y0-y1)
+	fn lerp_points<Y>(&self,x0:&Self,x1:&Self, y0:&Y,y1:&Y)->Y
 		where Y:Lerp<F>, Self:InvLerp<F>
 	{
-		lerp_points(self,a,b, y0,y1)
+		lerp_points(self,x0,x1, y0,y1)
 	}
 }
 /// Linear interpolation, reversed order params
@@ -44,6 +46,21 @@ pub trait LerpBetween<T> :Sized+Clone where T:Lerp<Self>{
 pub fn lerp<F,T:Lerp<F>>(a:&T,b:&T, f:F)->T{
 	a.lerp(b,f)
 }
+
+/// helper function for bilerp, lerp of lerp; array grouping of arguments emphasises their arrangement as corners of a quad for interpolation across. 'u,v' are the intepolation factors (u-inner, v-outer). The point array is passed by ref for efficient 'trilerp' call.
+pub fn bilerp<F:Clone,T:Lerp<F>>(q:&[[&T;2];2],(u,v):(F,F))->T{
+	lerp(&lerp(q[0][0], q[0][1],u),
+		&lerp(q[0][0], q[0][1],v.clone()),
+		v)
+}
+
+/// trilinear interpolation given a cuboid of values; tuple grouping of 8 arguments emphasises this structure; 
+pub fn trilerp<F:Clone,T:Lerp<F>>(q:&[[[&T;2];2];2], (u,v,w):(F,F,F))->T{
+	let uv=(u,v);
+	lerp(&bilerp(&q[0], uv.clone()),
+		&bilerp(&q[1], uv), w)
+}
+
 /// Inverse linear interpolation trait,
 /// gives the factor by which 'self'
 /// is between the range specified by the args
